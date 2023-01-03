@@ -1,0 +1,33 @@
+name: Cancel Group if Any Job Fails
+
+on:
+  workflow_trigger:
+
+jobs:
+  short-job-that-fails:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run for 5 seconds then fail.
+        run: |
+          sleep 5
+          exit 1
+
+  long-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run for 20 seconds.
+        run: sleep 20
+
+  cancel-workflow-if-any-job-fails:
+    needs:
+      - short-job-that-fails
+      - long-job
+    if: ${{ failure() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel this workflow.
+        uses: vishnudxb/cancel-workflow@v1.2
+        with:
+          repo: { { github.repository } }
+          workflow_id: ${{ github.run_id }}
+          access_token: ${{ github.token }}
