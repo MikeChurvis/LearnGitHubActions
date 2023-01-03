@@ -7,9 +7,9 @@ jobs:
   short-job-that-passes:
     runs-on: ubuntu-latest
     steps:
-      - name: Run for 5 seconds.
+      - name: Run for 2 seconds.
         run: |
-          sleep 5
+          sleep 2
 
       # This step should not run.
       - name: Cancel this workflow if the previous step fails.
@@ -23,9 +23,9 @@ jobs:
   medium-job-that-fails:
     runs-on: ubuntu-latest
     steps:
-      - name: Run for 10 seconds then fail.
+      - name: Run for 8 seconds then fail.
         run: |
-          sleep 10
+          sleep 8
           exit 1
 
       # This step should run and cancel the workflow.
@@ -41,8 +41,8 @@ jobs:
   long-job-that-gets-cancelled:
     runs-on: ubuntu-latest
     steps:
-      - name: Run for 20 seconds.
-        run: sleep 20
+      - name: Run for 32 seconds.
+        run: sleep 32
 
   # # This doesn't work because it still has to wait for the long
   # # job to complete before it can run.
