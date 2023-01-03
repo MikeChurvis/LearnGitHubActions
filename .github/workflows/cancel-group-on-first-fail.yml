@@ -28,6 +28,6 @@ jobs:
       - name: Cancel this workflow.
         uses: vishnudxb/cancel-workflow@v1.2
         with:
-          repo: { { github.repository } }
+          repo: ${{ github.repository }}
           workflow_id: ${{ github.run_id }}
           access_token: ${{ github.token }}
