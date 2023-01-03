@@ -38,7 +38,7 @@ jobs:
           access_token: ${{ github.token }}
 
   # This should not finish because the workflow has been cancelled.
-  long-job:
+  long-job-that-gets-cancelled:
     runs-on: ubuntu-latest
     steps:
       - name: Run for 20 seconds.
