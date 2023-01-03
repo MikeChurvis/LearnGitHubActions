@@ -4,30 +4,59 @@ on:
   workflow_dispatch:
 
 jobs:
-  short-job-that-fails:
+  short-job-that-passes:
     runs-on: ubuntu-latest
     steps:
-      - name: Run for 5 seconds then fail.
+      - name: Run for 5 seconds.
+        run: |
+          sleep 5
+
+      # This step should not run.
+      - name: Cancel this workflow if the previous step fails.
+        if: ${{ failure() }}
+        uses: vishnudxb/cancel-workflow@v1.2
+        with:
+          repo: ${{ github.repository }}
+          workflow_id: ${{ github.run_id }}
+          access_token: ${{ github.token }}
+
+  medium-job-that-fails:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run for 10 seconds then fail.
         run: |
           sleep 5
           exit 1
 
+      # This step should run and cancel the workflow.
+      - name: Cancel this workflow if the previous step fails.
+        if: ${{ failure() }}
+        uses: vishnudxb/cancel-workflow@v1.2
+        with:
+          repo: ${{ github.repository }}
+          workflow_id: ${{ github.run_id }}
+          access_token: ${{ github.token }}
+
+  # This should not finish because the workflow has been cancelled.
   long-job:
     runs-on: ubuntu-latest
     steps:
       - name: Run for 20 seconds.
         run: sleep 20
 
-  cancel-workflow-if-any-job-fails:
-    needs:
-      - short-job-that-fails
-      - long-job
-    if: ${{ failure() }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Cancel this workflow.
-        uses: vishnudxb/cancel-workflow@v1.2
-        with:
-          repo: ${{ github.repository }}
-          workflow_id: ${{ github.run_id }}
-          access_token: ${{ github.token }}
+  # # This doesn't work because it still has to wait for the long
+  # # job to complete before it can run.
+  #
+  # cancel-workflow-if-any-job-fails:
+  #   needs:
+  #     - short-job-that-fails
+  #     - long-job
+  #   if: ${{ failure() }}
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Cancel this workflow.
+  #       uses: vishnudxb/cancel-workflow@v1.2
+  #       with:
+  #         repo: ${{ github.repository }}
+  #         workflow_id: ${{ github.run_id }}
+  #         access_token: ${{ github.token }}
