@@ -1,7 +1,7 @@
 name: Cancel Group if Any Job Fails
 
 on:
-  workflow_trigger:
+  workflow_dispatch:
 
 jobs:
   short-job-that-fails:
